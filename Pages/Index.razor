@@ -1,7 +1,7 @@
 ﻿@page "/"
 
 
-<h1>Merge PDFs</h1>
+<h1>Local PDF Merge</h1>
 
 <label for="uploadFiles">Select pdfs:</label>
 <InputFile class="form-control" id="uploadFiles" multiple OnChange="HandleSelection" />
@@ -32,24 +32,23 @@
     @if (loading) {
         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     }
-    Create PDF
+    Merge PDFs
 </button>
 
 @code {
-    IFileListEntry[] selectedFiles;
+    List<IFileListEntry> selectedFiles = new List<IFileListEntry>();
 
     Boolean loading = false;
 
     void HandleSelection(IFileListEntry[] files)
     {
-        selectedFiles = files;
+        selectedFiles = new List<IFileListEntry>();
+        selectedFiles.AddRange(files);
     }
 
     void RemoveFile(IFileListEntry file)
     {
-        List<IFileListEntry> list = new List<IFileListEntry>(selectedFiles);
-        list.RemoveAt(Array.IndexOf(selectedFiles, file));
-        selectedFiles = list.ToArray();
+        selectedFiles.Remove(file);
     }
 }
 
@@ -71,7 +70,8 @@
         MemoryStream stream = new MemoryStream();
         outPdf.Save(stream, true);
 
-        await JS.SaveAs("Sample.pdf", stream.ToArray());
+        await JS.SaveAs("Merged.pdf", stream.ToArray());
+        selectedFiles = new List<IFileListEntry>();
         loading = false;
     }
     void CopyPages(PdfDocument from, PdfDocument to)
