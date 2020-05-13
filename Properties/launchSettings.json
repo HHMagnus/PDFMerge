@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:1033",
+      "applicationUrl": "http://localhost:1033/PDFMerge",
       "sslPort": 44367
     }
   },
