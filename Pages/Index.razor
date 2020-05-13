@@ -1,0 +1,87 @@
+﻿@page "/"
+
+
+<h1>Merge PDFs</h1>
+
+<label for="uploadFiles">Select pdfs(s)</label>
+<InputFile id="uploadFiles" multiple OnChange="HandleSelection" />
+
+@if (selectedFiles != null)
+{
+    foreach (var file in selectedFiles)
+    {
+        var isLoading = file.Data.Position > 0;
+
+        <div class="file-row">
+            <!-- File info -->
+            <div>
+                <h2>@file.Name</h2>
+                Size: <strong>@file.Size bytes</strong>;
+                Last modified: <strong>@file.LastModified.ToShortDateString()</strong>;
+                Type: <strong>@file.Type</strong>
+            </div>
+
+            <!-- Upload button -->
+            <button @onclick="() => LoadFile(file)" disabled="@isLoading">
+                @if (!isLoading)
+                {
+                    <span>Load</span>
+                }
+                else
+                {
+                    <span>Loaded @((100.0 * file.Data.Position / file.Size).ToString("0"))%</span>
+                }
+            </button>
+        </div>
+    }
+}
+
+<button class="btn btn-primary" @onclick="@CreatePDF">Create PDF</button>
+
+@code {
+    IFileListEntry[] selectedFiles;
+
+    void HandleSelection(IFileListEntry[] files)
+    {
+        selectedFiles = files;
+    }
+
+    async Task LoadFile(IFileListEntry file)
+    {
+        // So the UI updates to show progress
+        file.OnDataRead += (sender, eventArgs) => InvokeAsync(StateHasChanged);
+
+        // Just load into .NET memory to show it can be done
+        // Alternatively it could be saved to disk, or parsed in memory, or similar
+        var ms = new MemoryStream();
+        await file.Data.CopyToAsync(ms);
+    }
+}
+
+@functions {
+ 
+    async Task CreatePDF()
+    {
+        PdfDocument outPdf = new PdfDocument();
+
+        foreach (IFileListEntry file in selectedFiles){
+            var ms = new MemoryStream();
+            await file.Data.CopyToAsync(ms);
+            PdfDocument document = PdfReader.Open(ms, PdfDocumentOpenMode.Import);
+        
+            CopyPages(document, outPdf);
+        }
+        
+        MemoryStream stream = new MemoryStream();
+        outPdf.Save(stream, true);
+
+        await JS.SaveAs("Sample.pdf", stream.ToArray());
+    }
+    void CopyPages(PdfDocument from, PdfDocument to)
+    {
+        for (int i = 0; i < from.PageCount; i++)
+        {
+            to.AddPage(from.Pages[i]);
+        }
+    }
+}
