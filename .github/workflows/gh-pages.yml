@@ -23,6 +23,6 @@ jobs:
       with:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BASE_BRANCH: master
-        BRANCH: gh-pages-test
+        BRANCH: gh-pages
         FOLDER: build/wwwroot
         CLEAN: true
