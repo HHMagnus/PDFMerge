@@ -3,16 +3,14 @@
 
 <h1>Merge PDFs</h1>
 
-<label for="uploadFiles">Select pdfs(s)</label>
-<InputFile id="uploadFiles" multiple OnChange="HandleSelection" />
-
+<label for="uploadFiles">Select pdfs:</label>
+<InputFile class="form-control" id="uploadFiles" multiple OnChange="HandleSelection" />
+<ul class="list-group mt-2">
 @if (selectedFiles != null)
 {
     foreach (var file in selectedFiles)
     {
-        var isLoading = file.Data.Position > 0;
-
-        <div class="file-row">
+        <li class="list-group-item">
             <!-- File info -->
             <div>
                 <h2>@file.Name</h2>
@@ -22,39 +20,36 @@
             </div>
 
             <!-- Upload button -->
-            <button @onclick="() => LoadFile(file)" disabled="@isLoading">
-                @if (!isLoading)
-                {
-                    <span>Load</span>
-                }
-                else
-                {
-                    <span>Loaded @((100.0 * file.Data.Position / file.Size).ToString("0"))%</span>
-                }
+            <button @onclick="() => RemoveFile(file)" class="btn btn-danger">
+                -
             </button>
-        </div>
+        </li>
     }
 }
+</ul>
 
-<button class="btn btn-primary" @onclick="@CreatePDF">Create PDF</button>
+<button class="btn btn-primary mt-2" disabled="@loading" @onclick="@CreatePDF">
+    @if (loading) {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    }
+    Create PDF
+</button>
 
 @code {
     IFileListEntry[] selectedFiles;
+
+    Boolean loading = false;
 
     void HandleSelection(IFileListEntry[] files)
     {
         selectedFiles = files;
     }
 
-    async Task LoadFile(IFileListEntry file)
+    void RemoveFile(IFileListEntry file)
     {
-        // So the UI updates to show progress
-        file.OnDataRead += (sender, eventArgs) => InvokeAsync(StateHasChanged);
-
-        // Just load into .NET memory to show it can be done
-        // Alternatively it could be saved to disk, or parsed in memory, or similar
-        var ms = new MemoryStream();
-        await file.Data.CopyToAsync(ms);
+        List<IFileListEntry> list = new List<IFileListEntry>(selectedFiles);
+        list.RemoveAt(Array.IndexOf(selectedFiles, file));
+        selectedFiles = list.ToArray();
     }
 }
 
@@ -62,6 +57,7 @@
  
     async Task CreatePDF()
     {
+        loading = true;
         PdfDocument outPdf = new PdfDocument();
 
         foreach (IFileListEntry file in selectedFiles){
@@ -76,6 +72,7 @@
         outPdf.Save(stream, true);
 
         await JS.SaveAs("Sample.pdf", stream.ToArray());
+        loading = false;
     }
     void CopyPages(PdfDocument from, PdfDocument to)
     {
