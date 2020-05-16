@@ -1,12 +1,12 @@
 {
   "cacheBootResources": true,
   "config": [ ],
-  "debugBuild": true,
+  "debugBuild": false,
   "entryAssembly": "PDFMerger2",
   "linkerEnabled": false,
   "resources": {
     "assembly": {
-      "PDFMerger2.dll": "sha256-SgdmCNg8XASW9W+xT7l7+5hYLBlxYRI\/nxNvpgxQV8k=",
+      "PDFMerger2.dll": "sha256-s0sU337SV2Vj2bHbC7TcyLUBVp7WSDXOe5G98BbXrCw=",
       "Microsoft.Extensions.DependencyInjection.Abstractions.dll": "sha256-ycn\/UHLnjC77BNvsurP4mkuYP8oud1oVyfSSlZKMymc=",
       "netstandard.dll": "sha256-\/zcPVM75OAY+joGVM8yIC1gO1SFYWP1CFERgQ8PJkfA=",
       "System.Xml.Linq.dll": "sha256-BR4GanYToXqE2EYNe6tH3QoW+R2qebwaW25Pk3l2MfE=",
@@ -66,9 +66,7 @@
       "I18N.Rare.dll": "sha256-TbTfOGcSZadfTZTSvapU6RqhH3KtZjo7iT32bZ6DCGY=",
       "I18N.West.dll": "sha256-Pguk5aiY89VyUNgdiXUfU7fpaC3EzLaA4O+YsOHTIvY="
     },
-    "pdb": {
-      "PDFMerger2.pdb": "sha256-FW+0I73Z+FBDnzr3ofqnHkw31WvvYkY1\/BSj\/fUUwQ4="
-    },
+    "pdb": null,
     "runtime": {
       "dotnet.3.2.0-rc1.20222.2.js": "sha256-iZCHkFXJWYNxCUFwhj+4oqR4fkEJc5YGjfTTvdIuX84=",
       "dotnet.timezones.dat": "sha256-3S0qzYaBEKOBXarzVLNzNAFXlwJr6nI3lFlYUpQTPH8=",
