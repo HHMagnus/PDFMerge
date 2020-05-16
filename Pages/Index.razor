@@ -71,7 +71,7 @@
     }
     
 
-    <button class="btn btn-primary mt-2" disabled="@(loading || files.Count == 0)" @onclick="@CreatePDF">
+    <button class="btn btn-primary mt-2" disabled="@(loading || files.Count == 0)" @onclick="@CreatePDFClicked">
         @if (loading) {
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         }
@@ -129,10 +129,20 @@
 
 @functions {
  
-    async Task CreatePDF()
+    async Task CreatePDFClicked()
     {
         if(files.Count == 0) return;
         loading = true;
+
+        // This is needed to make loading spinner take effect
+        await Task.Delay(10);
+
+        await CreatePDF();
+        
+        loading = false;
+    }
+
+    async Task CreatePDF(){
         PdfDocument outPdf = new PdfDocument();
 
         foreach (FileInMemory file in files)
@@ -153,7 +163,6 @@
         outPdf.Save(stream, true);
 
         await JS.SaveAs("Merged.pdf", stream.ToArray());
-        loading = false;
     }
     void CopyPages(PdfDocument from, PdfDocument to)
     {
