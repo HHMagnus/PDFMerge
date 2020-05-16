@@ -135,9 +135,16 @@
 
         foreach (FileInMemory file in files)
         {
-            PdfDocument document = PdfReader.Open(file.Stream, PdfDocumentOpenMode.Import);
-
-            CopyPages(document, outPdf);
+            try{
+                PdfDocument document = PdfReader.Open(file.Stream, PdfDocumentOpenMode.Import);
+                CopyPages(document, outPdf);
+            }
+            catch (Exception e)
+            {
+                await JS.InvokeAsync<object>("alert", "Corrupt pdf: " + file.Name);
+                loading = false;
+                return;
+            }
         }
 
         MemoryStream stream = new MemoryStream();
