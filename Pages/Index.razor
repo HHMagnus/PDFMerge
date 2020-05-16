@@ -71,7 +71,7 @@
     }
     
 
-    <button class="btn btn-primary mt-2" disabled="@loading" @onclick="@CreatePDF">
+    <button class="btn btn-primary mt-2" disabled="@(loading || files.Count == 0)" @onclick="@CreatePDF">
         @if (loading) {
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         }
@@ -131,6 +131,7 @@
  
     async Task CreatePDF()
     {
+        if(files.Count == 0) return;
         loading = true;
         PdfDocument outPdf = new PdfDocument();
 
