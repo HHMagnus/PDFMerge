@@ -1,5 +1,4 @@
 ﻿@page "/"
-
 <div class="container text-center">
 
     <h1>Local PDF Merge</h1>
@@ -7,28 +6,69 @@
     <label for="uploadFiles">Select pdfs:</label>
     <div class="drag-drop-zone">
         <InputFile id="uploadFiles" multiple OnChange="HandleSelection" accept="application/pdf" />
-        Drop any amount of pdfs to merge them
+        Drop any amount of pdfs, or click to choose which, to merge
     </div>
-    <ul class="list-group mt-2">
+    
     @if (selectedFiles != null)
     {
-        foreach (var file in selectedFiles)
+        <ul class="list-group mt-2">
+        @foreach (var file in selectedFiles)
         {
             <li class="list-group-item">
-                <div>
-                    <h2>@file.Name</h2>
-                    Size: <strong>@file.Size bytes</strong>;
-                    Last modified: <strong>@file.LastModified.ToShortDateString()</strong>;
-                    Type: <strong>@file.Type</strong>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    
+                    <h3>@file.Name</h3>
+                    <span>Size: <strong>@file.Size bytes</strong></span>
                 </div>
-
-                <button @onclick="() => RemoveFile(file)" class="btn btn-danger">
-                    -
-                </button>
             </li>
         }
+        </ul>
     }
-    </ul>
+    
+
+    
+    @if(files != null)
+    {
+        if(files.Count != 0){
+            <button class="btn btn-secondary" @onclick="()=> Reset()">Reset</button>
+        }
+        <ul class="list-group mt-2">
+        @foreach(var file in files)
+        {
+            int index = files.IndexOf(file);
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex">
+                        @if (index != 0)
+                        {
+                            <button class="btn" @onclick="() => MoveUp(file)">
+                                <svg class="bi bi-caret-up" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M3.204 11L8 5.519 12.796 11H3.204zm-.753-.659l4.796-5.48a1 1 0 011.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 01-.753-1.659z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        }
+                        else {
+                            <div style="width: 42px; height: 40px; padding: 1px"></div>
+                        }
+                        @if (index != files.Count-1)
+                        {
+                            <button class="btn" @onclick="() => MoveDown(file)">
+                                <svg class="bi bi-caret-down" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M3.204 5L8 10.481 12.796 5H3.204zm-.753.659l4.796 5.48a1 1 0 001.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 00-.753 1.659z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        }
+                    </div>
+                    
+                    <h3>@file.Name</h3>
+                    <button @onclick="() => RemoveFile(file)" class="btn btn-danger">-</button>
+                </div>
+            </li>
+        }
+        </ul>
+    }
+    
 
     <button class="btn btn-primary mt-2" disabled="@loading" @onclick="@CreatePDF">
         @if (loading) {
@@ -39,19 +79,50 @@
 </div>
 
 @code {
-    List<IFileListEntry> selectedFiles = new List<IFileListEntry>();
+    List<FileInMemory> files = new List<FileInMemory>();
+    List<IFileListEntry> selectedFiles;
 
     Boolean loading = false;
 
-    void HandleSelection(IFileListEntry[] files)
+    async Task HandleSelection(IFileListEntry[] files)
     {
         selectedFiles = new List<IFileListEntry>();
         selectedFiles.AddRange(files);
+        foreach(IFileListEntry ifile in files){
+            if(ifile.Type != "application/pdf"){
+                selectedFiles.Remove(ifile);
+                continue;
+            }
+            var ms = new MemoryStream();
+            await ifile.Data.CopyToAsync(ms);
+            FileInMemory file = new FileInMemory(ms, ifile.Size, ifile.Name);
+            this.files.Add(file);
+            selectedFiles.Remove(ifile);
+        }
     }
 
-    void RemoveFile(IFileListEntry file)
+    void RemoveFile(FileInMemory file)
     {
-        selectedFiles.Remove(file);
+        files.Remove(file);
+    }
+
+    void Reset()
+    {
+        files = new List<FileInMemory>();
+    }
+
+    void MoveUp(FileInMemory file)
+    {
+        int index = files.IndexOf(file);
+        files.Remove(file);
+        files.Insert(index-1, file);
+    }
+
+    void MoveDown(FileInMemory file)
+    {
+        int index = files.IndexOf(file);
+        files.Remove(file);
+        files.Insert(index+1, file);
     }
 }
 
@@ -62,11 +133,9 @@
         loading = true;
         PdfDocument outPdf = new PdfDocument();
 
-        foreach (IFileListEntry file in selectedFiles)
+        foreach (FileInMemory file in files)
         {
-            var ms = new MemoryStream();
-            await file.Data.CopyToAsync(ms);
-            PdfDocument document = PdfReader.Open(ms, PdfDocumentOpenMode.Import);
+            PdfDocument document = PdfReader.Open(file.Stream, PdfDocumentOpenMode.Import);
 
             CopyPages(document, outPdf);
         }
@@ -75,7 +144,6 @@
         outPdf.Save(stream, true);
 
         await JS.SaveAs("Merged.pdf", stream.ToArray());
-        selectedFiles = new List<IFileListEntry>();
         loading = false;
     }
     void CopyPages(PdfDocument from, PdfDocument to)
