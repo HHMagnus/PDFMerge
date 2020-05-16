@@ -2,6 +2,7 @@
 <div class="container text-center">
 
     <h1>Local PDF Merge</h1>
+    <h5>Everything is done locally on your pc!</h5>
 
     <label for="uploadFiles">Select pdfs:</label>
     <div class="drag-drop-zone">
@@ -139,7 +140,7 @@
                 PdfDocument document = PdfReader.Open(file.Stream, PdfDocumentOpenMode.Import);
                 CopyPages(document, outPdf);
             }
-            catch (Exception e)
+            catch
             {
                 await JS.InvokeAsync<object>("alert", "Corrupt pdf: " + file.Name);
                 loading = false;
@@ -161,3 +162,16 @@
         }
     }
 }
+
+<div class="container text-center pt-5 mt-5">
+    <h3>FAQ</h3>
+    <b>Is it free?</b>
+    <p>Yes, it is completely free for both you and me. <br> The hosting is provided for free by <a href="https://pages.github.com/">Github Pages</a>.</p>
+    <b>How does it work?</b>
+    <p>Short answer: <br>Your browser provides a tool called <a href="https://webassembly.org/">Webassembly</a>, which this website takes advantage of to provide a small application that allows you to merge pdfs.</p>
+    <p>Long (technical) answer: <br> See <a href="https://github.com/HHMagnus/PDFMerge/blob/master/README.md">README</a>.</p>
+    <b>It says my pdf is corrupt, what to do?</b>
+    <p>Usually it is either because it is password-protected or because of an small error in the formatting. Try opening it in a pdf-reader and saving it.</p>
+    <b>How can I contribute?</b>
+    <p>If you want to help improve the project, check out the <a href="https://github.com/HHMagnus/PDFMerge">repository</a>.</p>
+</div>
