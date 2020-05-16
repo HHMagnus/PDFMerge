@@ -6,7 +6,7 @@
   "linkerEnabled": false,
   "resources": {
     "assembly": {
-      "PDFMerger2.dll": "sha256-gbYz40KTQCKcoVgRD1otITQyYFNdbFfa0G6y37anHGg=",
+      "PDFMerger2.dll": "sha256-od3plPfqxU4Pr1nZ1\/vPUrK6zggBt4SMsnBh97l0pRo=",
       "Microsoft.Extensions.DependencyInjection.Abstractions.dll": "sha256-ycn\/UHLnjC77BNvsurP4mkuYP8oud1oVyfSSlZKMymc=",
       "netstandard.dll": "sha256-\/zcPVM75OAY+joGVM8yIC1gO1SFYWP1CFERgQ8PJkfA=",
       "System.Xml.Linq.dll": "sha256-BR4GanYToXqE2EYNe6tH3QoW+R2qebwaW25Pk3l2MfE=",
