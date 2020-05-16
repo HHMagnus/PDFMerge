@@ -5,14 +5,16 @@
     <h1>Local PDF Merge</h1>
 
     <label for="uploadFiles">Select pdfs:</label>
-    <InputFile class="form-control" id="uploadFiles" multiple OnChange="HandleSelection" />
+    <div class="drag-drop-zone">
+        <InputFile id="uploadFiles" multiple OnChange="HandleSelection" />
+        Drop any amount of pdfs to merge them
+    </div>
     <ul class="list-group mt-2">
     @if (selectedFiles != null)
     {
         foreach (var file in selectedFiles)
         {
             <li class="list-group-item">
-                <!-- File info -->
                 <div>
                     <h2>@file.Name</h2>
                     Size: <strong>@file.Size bytes</strong>;
@@ -20,7 +22,6 @@
                     Type: <strong>@file.Type</strong>
                 </div>
 
-                <!-- Upload button -->
                 <button @onclick="() => RemoveFile(file)" class="btn btn-danger">
                     -
                 </button>
