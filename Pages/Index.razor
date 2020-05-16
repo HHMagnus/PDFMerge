@@ -1,39 +1,41 @@
 ﻿@page "/"
 
+<div class="container text-center">
 
-<h1>Local PDF Merge</h1>
+    <h1>Local PDF Merge</h1>
 
-<label for="uploadFiles">Select pdfs:</label>
-<InputFile class="form-control" id="uploadFiles" multiple OnChange="HandleSelection" />
-<ul class="list-group mt-2">
-@if (selectedFiles != null)
-{
-    foreach (var file in selectedFiles)
+    <label for="uploadFiles">Select pdfs:</label>
+    <InputFile class="form-control" id="uploadFiles" multiple OnChange="HandleSelection" />
+    <ul class="list-group mt-2">
+    @if (selectedFiles != null)
     {
-        <li class="list-group-item">
-            <!-- File info -->
-            <div>
-                <h2>@file.Name</h2>
-                Size: <strong>@file.Size bytes</strong>;
-                Last modified: <strong>@file.LastModified.ToShortDateString()</strong>;
-                Type: <strong>@file.Type</strong>
-            </div>
+        foreach (var file in selectedFiles)
+        {
+            <li class="list-group-item">
+                <!-- File info -->
+                <div>
+                    <h2>@file.Name</h2>
+                    Size: <strong>@file.Size bytes</strong>;
+                    Last modified: <strong>@file.LastModified.ToShortDateString()</strong>;
+                    Type: <strong>@file.Type</strong>
+                </div>
 
-            <!-- Upload button -->
-            <button @onclick="() => RemoveFile(file)" class="btn btn-danger">
-                -
-            </button>
-        </li>
+                <!-- Upload button -->
+                <button @onclick="() => RemoveFile(file)" class="btn btn-danger">
+                    -
+                </button>
+            </li>
+        }
     }
-}
-</ul>
+    </ul>
 
-<button class="btn btn-primary mt-2" disabled="@loading" @onclick="@CreatePDF">
-    @if (loading) {
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    }
-    Merge PDFs
-</button>
+    <button class="btn btn-primary mt-2" disabled="@loading" @onclick="@CreatePDF">
+        @if (loading) {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        }
+        Merge PDFs
+    </button>
+</div>
 
 @code {
     List<IFileListEntry> selectedFiles = new List<IFileListEntry>();
@@ -59,14 +61,15 @@
         loading = true;
         PdfDocument outPdf = new PdfDocument();
 
-        foreach (IFileListEntry file in selectedFiles){
+        foreach (IFileListEntry file in selectedFiles)
+        {
             var ms = new MemoryStream();
             await file.Data.CopyToAsync(ms);
             PdfDocument document = PdfReader.Open(ms, PdfDocumentOpenMode.Import);
-        
+
             CopyPages(document, outPdf);
         }
-        
+
         MemoryStream stream = new MemoryStream();
         outPdf.Save(stream, true);
 
