@@ -7,7 +7,7 @@
     <label for="uploadFiles">Select pdfs:</label>
     <div class="drag-drop-zone">
         <InputFile id="uploadFiles" multiple OnChange="HandleSelection" accept="application/pdf" />
-        Drop any amount of pdfs, or click to choose which, to merge
+        Drop pdf files here or click here to choose
     </div>
     
     @if (selectedFiles != null)
@@ -175,10 +175,10 @@
         Either you download a (usually sketchy) application for merging pdfs, pay for a less sketchy application or use a online service to do it. 
         Downloading an application just to merge a pdf is annoying because you usually only need once in a bluemoon, so paying for it is out of the question. 
         And installing a sketchy application is usually out of the question, since you don't want to risk getting another virus.
-        Using a online service to to it requires you to upload your pdfs to their server, which is a huge invasion of privacy even if they just delete them again after merging.
+        Using an online service to merge pdfs, requires you to upload your pdfs to their server, which is a huge invasion of privacy even if they just delete them again after merging.
         All these options are terrible and with the support for webassembly on all modern browsers, I thought it was time for a better alternative.</p>
     <b>It says my pdf is corrupt, what to do?</b>
-    <p>Usually it is either because it is password-protected or because of an small error in the formatting. Try opening it in a pdf-reader and saving it.</p>
+    <p>Usually it is either because it is password-protected or because of a small error in the formatting. Try opening it in a pdf-reader and save it with another name.</p>
     <b>How can I contribute?</b>
     <p>If you want to help improve the project, check out the <a href="https://github.com/HHMagnus/PDFMerge">repository</a>.</p>
 </div>
