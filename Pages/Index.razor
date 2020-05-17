@@ -1,83 +1,79 @@
 ﻿@page "/"
-<div class="container text-center">
 
-    <h1>Local PDF Merge</h1>
-    <h5>Everything is done locally on your pc!</h5>
-
-    <label for="uploadFiles">Select pdfs:</label>
-    <div class="drag-drop-zone">
-        <InputFile id="uploadFiles" multiple OnChange="HandleSelection" accept="application/pdf" capture="false" />
-        Drop pdf files here or click here to choose
-    </div>
-    
-    @if (selectedFiles != null)
-    {
-        <ul class="list-group mt-2">
-        @foreach (var file in selectedFiles)
-        {
-            <li class="list-group-item">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    
-                    <h3>@file.Name</h3>
-                    <span>Size: <strong>@file.Size bytes</strong></span>
-                </div>
-            </li>
-        }
-        </ul>
-    }
-    
-
-    
-    @if(files != null)
-    {
-        if(files.Count != 0){
-            <button class="btn btn-danger" disabled="@(loading)" @onclick="()=> Reset()">Remove all</button>
-        }
-        <ul class="list-group mt-2">
-        @foreach(var file in files)
-        {
-            int index = files.IndexOf(file);
-            <li class="list-group-item">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex">
-                        @if (index != 0)
-                        {
-                            <button class="btn" disabled="@(loading)" @onclick="() => MoveUp(file)">
-                                <svg class="bi bi-caret-up-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 00.753-1.659l-4.796-5.48a1 1 0 00-1.506 0z"/>
-                                </svg>
-                            </button>
-                        }
-                        else {
-                            <div style="width: 42px; height: 40px; padding: 1px"></div>
-                        }
-                        @if (index != files.Count-1)
-                        {
-                            <button class="btn" disabled="@(loading)" @onclick="() => MoveDown(file)">
-                                <svg class="bi bi-caret-down-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z"/>
-                                </svg>
-                            </button>
-                        }
-                    </div>
-                    
-                    <h3>@file.Name</h3>
-                    <button disabled="@(loading)" @onclick="() => RemoveFile(file)" class="btn btn-danger">-</button>
-                </div>
-            </li>
-        }
-        </ul>
-    }
-    
-
-    <button class="btn btn-primary mt-2" disabled="@(loading || files.Count == 0)" @onclick="@CreatePDFClicked">
-        @if (loading) {
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        }
-        Merge PDFs
-    </button>
+<label for="uploadFiles">Select pdfs:</label>
+<div class="drag-drop-zone">
+    <InputFile id="uploadFiles" multiple OnChange="HandleSelection" accept="application/pdf" capture="false" />
+    Drop pdf files here or click here to choose
 </div>
+    
+@if (selectedFiles != null)
+{
+    <ul class="list-group mt-2">
+    @foreach (var file in selectedFiles)
+    {
+        <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                
+                <h3>@file.Name</h3>
+                <span>Size: <strong>@file.Size bytes</strong></span>
+            </div>
+        </li>
+    }
+    </ul>
+}
+    
+
+    
+@if(files != null)
+{
+    if(files.Count != 0){
+        <button class="btn btn-danger" disabled="@(loading)" @onclick="()=> Reset()">Remove all</button>
+    }
+    <ul class="list-group mt-2">
+    @foreach(var file in files)
+    {
+        int index = files.IndexOf(file);
+        <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex">
+                    @if (index != 0)
+                    {
+                        <button class="btn" disabled="@(loading)" @onclick="() => MoveUp(file)">
+                            <svg class="bi bi-caret-up-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 00.753-1.659l-4.796-5.48a1 1 0 00-1.506 0z"/>
+                            </svg>
+                        </button>
+                    }
+                    else {
+                        <div style="width: 42px; height: 40px; padding: 1px"></div>
+                    }
+                    @if (index != files.Count-1)
+                    {
+                        <button class="btn" disabled="@(loading)" @onclick="() => MoveDown(file)">
+                            <svg class="bi bi-caret-down-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z"/>
+                            </svg>
+                        </button>
+                    }
+                </div>
+                    
+                <h3>@file.Name</h3>
+                <button disabled="@(loading)" @onclick="() => RemoveFile(file)" class="btn btn-danger">-</button>
+            </div>
+        </li>
+    }
+    </ul>
+}
+    
+
+<button class="btn btn-primary mt-2" disabled="@(loading || files.Count == 0)" @onclick="@CreatePDFClicked">
+    @if (loading) {
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    }
+    Merge PDFs
+</button>
+
 
 @code {
     List<FileInMemory> files = new List<FileInMemory>();
@@ -89,8 +85,10 @@
     {
         selectedFiles = new List<IFileListEntry>();
         selectedFiles.AddRange(files);
-        foreach(IFileListEntry ifile in files){
-            if(ifile.Type != "application/pdf"){
+        foreach (IFileListEntry ifile in files)
+        {
+            if (ifile.Type != "application/pdf")
+            {
                 selectedFiles.Remove(ifile);
                 continue;
             }
@@ -117,14 +115,14 @@
     {
         int index = files.IndexOf(file);
         files.Remove(file);
-        files.Insert(index-1, file);
+        files.Insert(index - 1, file);
     }
 
     void MoveDown(FileInMemory file)
     {
         int index = files.IndexOf(file);
         files.Remove(file);
-        files.Insert(index+1, file);
+        files.Insert(index + 1, file);
     }
 }
 
@@ -132,23 +130,25 @@
  
     async Task CreatePDFClicked()
     {
-        if(files.Count == 0) return;
+        if (files.Count == 0) return;
         loading = true;
 
         await Task.Yield();
 
         await CreatePDF();
-        
+
         loading = false;
     }
 
-    async Task CreatePDF(){
+    async Task CreatePDF()
+    {
         PdfDocument outPdf = new PdfDocument();
 
         foreach (FileInMemory file in files)
         {
             await Task.Yield();
-            try{
+            try
+            {
                 PdfDocument document = PdfReader.Open(file.Stream, PdfDocumentOpenMode.Import);
                 await CopyPages(document, outPdf);
             }
@@ -175,30 +175,3 @@
         }
     }
 }
-
-<div class="container text-center pt-5 mt-5 mb-5">
-    <h3>FAQ</h3>
-    <b>Is it free?</b>
-    <p>Yes, it is completely free for both you and me. <br> The hosting is provided for free by <a href="https://pages.github.com/">Github Pages</a>.</p>
-    <b>How does it work?</b>
-    <p>Short answer: <br>Your browser provides a tool called <a href="https://webassembly.org/">Webassembly</a>, which this website takes advantage of to provide a small application that allows you to merge pdfs.</p>
-    <p>Long (technical) answer: <br> See <a href="https://github.com/HHMagnus/PDFMerge/blob/master/README.md">README</a>.</p>
-    <b>Why was it made?</b>
-    <p>The process of merging pdfs is usually quite cumbersome. 
-        Either you download a (usually sketchy) application for merging pdfs, pay for a less sketchy application or use a online service to do it. 
-        Downloading an application just to merge a pdf is annoying because you usually only need once in a bluemoon, so paying for it is out of the question. 
-        And installing a sketchy application is usually out of the question, since you don't want to risk getting another virus.
-        Using an online service to merge pdfs, requires you to upload your pdfs to their server, which is a huge invasion of privacy even if they just delete them again after merging.
-        All these options are terrible and with the support for webassembly on all modern browsers, I thought it was time for a better alternative.</p>
-    <b>It says my pdf is corrupt, what to do?</b>
-    <p>Usually it is either because it is password-protected or because of a small error in the formatting. Try opening it in a pdf-reader and save it with another name.</p>
-    <b>Where is the file?</b>
-    <p>If you are on a phone the file is usually placed in your Downloads folder. You can view this by going to your Files/Archives app.
-        <br>
-        If you are on a computer the browser will usually ask you where to save the file, but if it did not, it is placed in your browsers <a href="http://www.google.com/search?q=download+folder" target="_blank">Downloads folder</a>.
-    </p>
-    <b>Why is the file not a pdf file?</b>
-    <p>Sometimes, especially on phones, the file is given a name that does not include the extension ".pdf". Simply renaming the file to include ".pdf" will fix this issue.</p>
-    <b>How can I contribute?</b>
-    <p>If you want to help improve the project, check out the <a href="https://github.com/HHMagnus/PDFMerge">repository</a>.</p>
-</div>
